@@ -1,5 +1,6 @@
 from ast import alias
 from datetime import datetime
+from os import name
 from time import time
 import database
 
@@ -225,6 +226,78 @@ class app(READFILE) :
         d = database.DELETE() 
         d.delete(query)
 
+class ADMINE(READFILE) :
+    def show_info_users(self) :
+        print("""
+        what do you want to do?
+        1. show all users info
+        2. show info of one user
+        """)
+        ch = int(input("input a number (1-2)"))
+        if ch == 1 :
+            with open("user.txt" , "r") as f :
+                r = READFILE.read_file(f)
+                print(r)
+        elif ch == 2 :
+            national_code = int(input("input code meli useri ke mikhai etelaatesho bbini"))
+            with open("user.txt" , "r") as f :
+                r = READFILE.read_file(f)
+                for line in r:
+            
+                    if str(line[1]) == str(national_code) :                            
+                        line_of_userinfo = line
+                    print("information of user :" + line_of_userinfo )
+
+             
+            with open("hesab.txt" , "r") as f :
+                r = READFILE.read_file(f)
+                list_hesab = []
+                for line in r:
+                    if str(line[2]) == str(national_code) :                            
+                        list_hesab.append(line)
+                print(list_hesab)
+    def change_info() :
+        national_code = int(input("input code meli useri ke mikhai etelaatesho bbini"))
+        with open("user.txt" , "r") as f :
+                r = READFILE.read_file(f)
+                headers = r[0]
+                for line in r:
+            
+                    if str(line[1]) == str(national_code) :                            
+                        line_of_userinfo = line
+                        z = zip(headers, line_of_userinfo)
+                        dictt6 = dict(z)
+                        print(dictt6.keys())
+                        k = input("input field to be changed : ")
+                        v = input("input value for field to be changed : ")
+                        dictt6[k] = v
+                        query = "UPDATE user WHERE national_code=={national_code} OR 1==1 VALUES {name} {national_code} {password} {phone_number} {email};".format( national_code=national_code ,name= dictt6["name"], password=dictt6["password"], phone_number=dictt6["phone_number"], email=dictt6["email"]  )     
+                        u = database.UPDATE
+                        u.update(query)
+    
+    def open_or_close() :
+        national_code = int(input("input code meli useri ke mikhai etelaatesho bbini"))
+        alias = input("input alias hesab ke mikhai open/close koni")
+        print("""
+        what do you want to do?
+        1. open an account
+        2. close account
+        """)
+        ch = int(input("input a number (1-2) : "))
+        if ch == 1 :
+            d = {}
+            d["national_code"] = national_code
+            app.create_account(d)
+        elif ch == 2 :
+            d = {}
+            d["national_code"] = national_code
+            app.bastane_hesab(d)
+
+
+
+
+
+
 
 class STARTAPP(READFILE) :
     while True :
@@ -290,7 +363,35 @@ class STARTAPP(READFILE) :
         
 
             elif n2 == 2 :              #admin
-               pass
+                national_code = input("please input your national code :")       #call UNIQUE checker
+                password = input("please input your password : ")
+
+                lines_strip = READFILE.read_file("admin")         
+                headers =  lines_strip[0]
+
+                for line in lines_strip :
+            
+                    if (str(line[1]) == national_code) and (line[2] == password)  :                            #index of natinal code in list of headers of table files : 1
+                        print("Login completed successfully")
+                        line_of_userinfo = line
+                        z = zip(headers, line_of_userinfo)
+                        dictt = dict(z)
+
+                        print("""
+                        what dou you wnat to do?
+                        1. moshahede etelaate hesabe users
+                        2. taghir etelaate hesabe users
+                        3. baz v baste kardane hesabe users
+                        """)
+                        ch = int(input("input a number (1-3)"))
+
+                        if ch == 1 :
+                            ADMINE.show_info_users()
+                        elif ch == 2 :
+                            ADMINE.change_info()
+                        elif ch == 3:
+                            ADMINE.open_or_close()
+
 
         elif n1 == 2 :                 #signin
             name = input("please enter your name :")
