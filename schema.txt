@@ -30,6 +30,13 @@ ghabz_id UNIQUE char(100)
 pardakht_id UNIQUE char(100)
 mablgh_ghabz INTEGER
 
+admin
+Name char(50)
+national_code UNIQUE INTEGER
+Password char(100)
+Phone_number UNIQUE INTEGER
+email UNIQUE char(50)
+
 Vam
 Vam_amount INTEGER
 Dore_Vam INTEGER
